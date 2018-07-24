@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd">
+    <flow name="decisionFlow">
+        <set-variable variableName="destino" value="#[message.inboundProperties.'http.query.params'.destino]" doc:name="Variable"/>
+        <choice doc:name="Choice">
+            <when expression="#[flowVars.destino != empty]">
+                <flow-ref name="destino_vuelosFlow" doc:name="destino_vuelosFlow"/>
+            </when>
+            <otherwise>
+                <flow-ref name="todos_losVuelosApiFlow" doc:name="todos_losVuelosApiFlow"/>
+            </otherwise>
+        </choice>
+    </flow>
+    <flow name="todos_losVuelosApiFlow">
+        <http:request config-ref="HTTP_Request_Personal" path="/todosvuelos/allflights" method="GET" doc:name="HTTP"/>
+        <logger message="#[payload]   '\n'   #[message.payload]" level="INFO" doc:name="Logger"/>
+    </flow>
+    <flow name="destino_vuelosFlow">
+        <http:request config-ref="HTTP_Request_Personal" path="/todosvuelos/flights" method="GET" doc:name="HTTP">
+            <http:request-builder>
+                <http:query-param paramName="destino" value="#[flowVars.destino]"/>
+            </http:request-builder>
+        </http:request>
+    </flow>
+</mule>

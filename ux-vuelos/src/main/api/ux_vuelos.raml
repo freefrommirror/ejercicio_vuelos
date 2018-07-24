@@ -1,0 +1,20 @@
+#%RAML 1.0
+title: Sample API
+
+/vuelossoap:
+  get:
+   queryParameters:
+    destino:
+      type: string
+      pattern: '[A-Z]{3}'
+      required: false
+      displayName: consigue todos los vuelos o solo de un destino
+   responses:
+    200:
+      body:
+        application/json:
+    400:
+      body:
+        application/json:
+          example: 
+            message: error en la consulta

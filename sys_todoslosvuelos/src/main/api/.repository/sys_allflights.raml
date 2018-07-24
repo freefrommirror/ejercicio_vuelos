@@ -1,0 +1,22 @@
+#%RAML 1.0
+title: sys_allFlights
+
+baseUri: http://localhost:8081
+
+types: 
+  Flight: !include Datatype/Flight.raml
+
+/allflights:
+  get:
+    displayName: GetAllFlights
+    responses: 
+      200:
+        body: 
+          application/json:
+            type: Flight []
+            example: !include Examples/FlightsExample.raml
+      500:
+        body: 
+          application/json:
+           example:
+            message: error en el servicio. No disponibe      
